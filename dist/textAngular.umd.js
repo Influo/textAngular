@@ -451,7 +451,7 @@ angular.module('textAngularSetup', ['ui.bootstrap'])
                 function afterSubmit() {
                     if(urlLink && urlLink !== '' && urlLink !== 'http://'){
                         $element.attr('href', urlLink);
-                        $element[0].text(linkName);
+                        $element.text(linkName);
                         editorScope.updateTaBindtaTextElement();
                     }
                     editorScope.hidePopover();
