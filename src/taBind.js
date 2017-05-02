@@ -955,32 +955,32 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                     // change that is seen is a 'input' and the $watch('html') sees nothing... So
                     // we added this element.on('input') to catch this change and call the _setViewValue()
                     // so the ngModel is updated and all works as it should.
-                    var _inputTimeout;
-                    element.on('input', function() {
-                        if (_compileHtml() !== ngModel.$viewValue) {
-                            // we wait a time now to allow the natural $watch('html') to handle this change
-                            // and then after a 1 second delay, if there is still a difference we will do the
-                            // _setViewValue() call.
-                            /* istanbul ignore if: can't test */
-                            if(_inputTimeout) $timeout.cancel(_inputTimeout);
-                            /* istanbul ignore next: cant' test? */
-                            _inputTimeout = $timeout(function() {
-                                var _savedSelection = rangy.saveSelection();
-                                var _val = _compileHtml();
-                                if (_val !== ngModel.$viewValue) {
-                                    //console.log('_setViewValue');
-                                    //console.log('old:', ngModel.$viewValue);
-                                    //console.log('new:', _val);
-                                    _setViewValue(_val, true);
-                                }
-                                // if the savedSelection marker is gone at this point, we cannot restore the selection!!!
-                                //console.log('rangy.restoreSelection', ngModel.$viewValue.length, _savedSelection);
-                                if (ngModel.$viewValue.length !== 0) {
-                                    rangy.restoreSelection(_savedSelection);
-                                }
-                            }, 1000);
-                        }
-                    });
+                    // var _inputTimeout;
+                    // element.on('input', function() {
+                    //     if (_compileHtml() !== ngModel.$viewValue) {
+                    //         // we wait a time now to allow the natural $watch('html') to handle this change
+                    //         // and then after a 1 second delay, if there is still a difference we will do the
+                    //         // _setViewValue() call.
+                    //         /* istanbul ignore if: can't test */
+                    //         if(_inputTimeout) $timeout.cancel(_inputTimeout);
+                    //         /* istanbul ignore next: cant' test? */
+                    //         _inputTimeout = $timeout(function() {
+                    //             var _savedSelection = rangy.saveSelection();
+                    //             var _val = _compileHtml();
+                    //             if (_val !== ngModel.$viewValue) {
+                    //                 //console.log('_setViewValue');
+                    //                 //console.log('old:', ngModel.$viewValue);
+                    //                 //console.log('new:', _val);
+                    //                 _setViewValue(_val, true);
+                    //             }
+                    //             // if the savedSelection marker is gone at this point, we cannot restore the selection!!!
+                    //             //console.log('rangy.restoreSelection', ngModel.$viewValue.length, _savedSelection);
+                    //             if (ngModel.$viewValue.length !== 0) {
+                    //                 rangy.restoreSelection(_savedSelection);
+                    //             }
+                    //         }, 1000);
+                    //     }
+                    // });
 
                     element.on('blur', scope.events.blur = function(){
                         _focussed = false;
