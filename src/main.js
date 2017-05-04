@@ -1,5 +1,6 @@
 // this global var is used to prevent multiple fires of the drop event. Needs to be global to the textAngular file.
 var dropFired = false;
+var dictionary = new Typo('en_US');
 var textAngular = angular.module("textAngular", ['ngSanitize', 'textAngularSetup', 'textAngular.factories', 'textAngular.DOM', 'textAngular.validators', 'textAngular.taBind', 'ui.bootstrap']); //This makes ngSanitize required
 
 textAngular.config([function(){
@@ -627,7 +628,7 @@ textAngular.directive("textAngular", [
                         return !(!value || value.trim() === '');
                     };
                 }else{
-                    // if no ngModel then update from the contents of the origional html.
+                    // if no ngModel then update from the contents of the original html.
                     scope.displayElements.forminput.val(_originalContents);
                     scope.html = _originalContents;
                 }
@@ -796,7 +797,7 @@ textAngular.directive("textAngular", [
                 scope.displayElements.html.on('keyup', _keyup);
                 scope.displayElements.text.on('keyup', _keyup);
                 // stop updating on key up and update the display/model
-                _keypress = function(event, eventData){
+                _keypress = function (event, eventData) {
                     // bug fix for Firefox.  If we are selecting a <a> already, any characters will
                     // be added within the <a> which is bad!
                     /* istanbul ignore next: don't see how to test this... */
@@ -820,6 +821,30 @@ textAngular.directive("textAngular", [
                                 taSelection.setSelectionBeforeElement(taSelection.getSelectionElement());
                             }
                         }
+                    }
+                    if (event.code === "Space") {
+                        var text = angular.element(scope.html);
+                        console.log("event", event, "scope", scope);
+                        console.log("text", text);
+                        console.log("length: ", text.length);
+                        for (var i = 0, l = text.length; i < l; i++) {
+                            var words = text[i].innerText.split(' ');
+                            console.log("words", words);
+                            for (var j = 0, w = words.length; j < w; j++) {
+                                var word = words[j];
+                                var isCorrect = dictionary.check(word.trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""));
+                                console.log(isCorrect);
+                                if (!isCorrect) {
+                                    // words[j] = words[j] + "<br>";
+                                    console.log("text.childNodes: ", text[i].childNodes);
+                                    // angular.element(text[i].childNodes).wrap("<b></b>");
+                                }
+                            }
+                            text[i].innerHTML = words.join(' ');
+                        }
+                        var tmp = document.createElement("div");
+                        tmp.appendChild(text);
+                        scope.html = tmp.innerHTML;
                     }
                     /* istanbul ignore else: this is for catching the jqLite testing*/
                     if(eventData) angular.extend(event, eventData);
