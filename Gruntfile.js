@@ -216,14 +216,15 @@ module.exports = function (grunt) {
 				compress: {},
 				wrap: false,
 				preserveComments: 'some'
-			},
-			my_target: {
-				files: {
-					'dist/textAngular-rangy.min.js': ['bower_components/rangy/rangy-core.js', 'bower_components/rangy/rangy-selectionsaverestore.js'],
-					'dist/textAngular-sanitize.min.js': ['src/textAngular-sanitize.js'],
-					'dist/textAngular.min.js': ['dist/textAngular.umd.js'],
-					'dist/textAngular-typo.min.js': ['node_modules/typo-js/typo.js']
-				}
+            },
+            my_target: {
+                files: {
+                    'dist/textAngular-rangy.min.js': ['bower_components/rangy/rangy-core.js', 'bower_components/rangy/rangy-selectionsaverestore.js'],
+                    'dist/textAngular-sanitize.min.js': ['src/textAngular-sanitize.js'],
+                    'dist/textAngular.min.js': ['dist/textAngular.umd.js'],
+                    'dist/textAngularSetup.min.js': ['dist/textAngularSetup.js'],
+                    'dist/textAngular-typo.min.js': ['node_modules/typo-js/typo.js']
+                }
 			}
 		},
 		demo_pages: {
