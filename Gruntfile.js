@@ -174,9 +174,9 @@ module.exports = function (grunt) {
 		copy: {
 			setupFiles: {
 				expand: true,
-				cwd: 'src/',
-				src: ['textAngularSetup.js', 'textAngular.css', 'textAngular-sanitize.js'],
-				dest: 'dist/'
+                cwd: 'src/',
+                src: ['textAngularSetup.js', 'textAngular.css', 'textAngular-sanitize.js', 'en_US.aff', 'en_US.dic'],
+                dest: 'dist/'
 			}
 		},
 		concat: {
@@ -221,7 +221,8 @@ module.exports = function (grunt) {
 				files: {
 					'dist/textAngular-rangy.min.js': ['bower_components/rangy/rangy-core.js', 'bower_components/rangy/rangy-selectionsaverestore.js'],
 					'dist/textAngular-sanitize.min.js': ['src/textAngular-sanitize.js'],
-					'dist/textAngular.min.js': ['dist/textAngular.umd.js']
+					'dist/textAngular.min.js': ['dist/textAngular.umd.js'],
+					'dist/textAngular-typo.min.js': ['node_modules/typo-js/typo.js']
 				}
 			}
 		},
