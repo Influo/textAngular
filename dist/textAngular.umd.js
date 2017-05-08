@@ -4869,20 +4869,19 @@ textAngular.directive("textAngular", [
                         return dictionary.check(word.trim().replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()]/g, ""));
                     }
 
-                    function wrapSpellingError(textNode, wrongWord) {
+                    function wrapSpellingError(textNode, wrongWord, parentNode) {
                         if (textNode.parentNode && textNode.parentNode.nodeName !== "MARKER") {
-                            // console.log("wrapSpellingError - textNode: ", textNode);
                             var temp = document.createElement("div");
                             temp.innerHTML = textNode.data.replace(wrongWord, "<marker class='spelling-error'>" + wrongWord + "</marker>");
                             while (temp.firstChild) {
                                 textNode.parentNode.insertBefore(temp.firstChild, textNode);
                             }
                             textNode.parentNode.removeChild(textNode);
+                            traverseChildNodes(parentNode);
                         }
                     }
-                    function removeError(node, word){
+                    function removeError(node){
                         if (node.parentNode && node.parentNode.nodeName === "MARKER") {
-                            console.log("node", node, "word", word);
                             node.parentNode.outerHTML = node.nodeValue;
                         }
 
@@ -4890,7 +4889,6 @@ textAngular.directive("textAngular", [
 
                     function traverseChildNodes(node) {
                         var next;
-                        console.log(node);
                         if(node.firstChild === "&#65279;")
                             return;
                         if (node.nodeType === 1) {
@@ -4902,24 +4900,25 @@ textAngular.directive("textAngular", [
                             }
                         } else if (node.nodeType === 3) {
                             var words = node.nodeValue.split(' ');
-                            console.log(words);
                             words.forEach(function (word) {
                                 var isCorrect = checkSpelling(word);
                                 if (!isCorrect) {
-                                    wrapSpellingError(node, word);
+                                    wrapSpellingError(node, word, node.parentNode);
                                 } else {
-                                    removeError(node, word);
+                                    removeError(node);
                                 }
                             });
                         }
                     }
                     if (event.keyCode === 32) {
                         var _savedSelection = rangy.saveSelection();
-                        // console.log("event", event, "scope", scope);
-                        console.log("_savedSelection: ", _savedSelection);
                         traverseChildNodes(this);
-                        rangy.restoreSelection(_savedSelection);
-                        // rangy.removeMarkers(_savedSelection);
+                        var _selectedElement = taSelection.getSelectionElement();
+                        if (this.querySelector("#" + _savedSelection.rangeInfos[0].markerId)) {
+                            rangy.restoreSelection(_savedSelection);
+                        } else {
+                            taSelection.setSelectionToElementEnd(_selectedElement);
+                        }
                     }
                     /* istanbul ignore else: this is for catching the jqLite testing*/
                     if(eventData) angular.extend(event, eventData);

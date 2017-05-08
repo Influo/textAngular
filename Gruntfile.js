@@ -160,13 +160,13 @@ module.exports = function (grunt) {
 			files: ['src/*.js', 'test/*.spec.js', 'test/taBind/*.spec.js', '!src/textAngular-sanitize.js'],// don't hint the textAngularSanitize as they will fail
 			options: {
 				eqeqeq: true,
-				immed: true,
-				latedef: true,
-				newcap: true,
-				noarg: true,
-				sub: true,
-				boss: true,
-				eqnull: true,
+                immed: true,
+                latedef: "nofunc",
+                newcap: true,
+                noarg: true,
+                sub: true,
+                boss: true,
+                eqnull: true,
 				loopfunc: true,
 				globals: {}
 			}
