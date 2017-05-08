@@ -4880,16 +4880,27 @@ textAngular.directive("textAngular", [
                             traverseChildNodes(parentNode);
                         }
                     }
-                    function removeError(node){
+
+                    function removeError(node) {
                         if (node.parentNode && node.parentNode.nodeName === "MARKER") {
-                            node.parentNode.outerHTML = node.nodeValue;
+                            if (node.parentNode.childNodes.length > 1) {
+                                var tmp = document.createElement("div");
+                                node.parentNode.childNodes.forEach(function (childNode) {
+                                    if (childNode.nodeName === "SPAN")
+                                        tmp.innerHTML += childNode.outerHTML;
+                                    else
+                                        tmp.innerHTML += childNode.nodeValue;
+                                });
+                                node.parentNode.outerHTML = tmp.innerHTML;
+                            } else
+                                node.parentNode.outerHTML = node.nodeValue;
                         }
 
                     }
 
                     function traverseChildNodes(node) {
                         var next;
-                        if(node.firstChild === "&#65279;")
+                        if (node.firstChild === "&#65279;")
                             return;
                         if (node.nodeType === 1) {
                             if (node = node.firstChild) {
@@ -4910,6 +4921,7 @@ textAngular.directive("textAngular", [
                             });
                         }
                     }
+
                     if (event.keyCode === 32) {
                         var _savedSelection = rangy.saveSelection();
                         traverseChildNodes(this);
