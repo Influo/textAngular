@@ -822,29 +822,54 @@ textAngular.directive("textAngular", [
                             }
                         }
                     }
-                    if (event.code === "Space") {
-                        var text = angular.element(scope.html);
-                        console.log("event", event, "scope", scope);
-                        console.log("text", text);
-                        console.log("length: ", text.length);
-                        for (var i = 0, l = text.length; i < l; i++) {
-                            var words = text[i].innerText.split(' ');
-                            console.log("words", words);
-                            for (var j = 0, w = words.length; j < w; j++) {
-                                var word = words[j];
-                                var isCorrect = dictionary.check(word.trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""));
-                                console.log(isCorrect);
-                                if (!isCorrect) {
-                                    // words[j] = words[j] + "<br>";
-                                    console.log("text.childNodes: ", text[i].childNodes);
-                                    // angular.element(text[i].childNodes).wrap("<b></b>");
-                                }
+                    function checkSpelling(word) {
+                        return dictionary.check(word.trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""));
+                    }
+
+                    function wrapSpellingError(textNode, wrongWord) {
+                        if (textNode.parentNode.nodeName !== "MARKER") {
+                            console.log("wrapSpellingError - textNode: ", textNode);
+                            var temp = document.createElement("div");
+                            temp.innerHTML = textNode.data.replace(wrongWord, "<marker class='spelling-error'>" + wrongWord + "</marker>");
+                            while (temp.firstChild) {
+                                textNode.parentNode.insertBefore(temp.firstChild, textNode);
                             }
-                            text[i].innerHTML = words.join(' ');
+                            textNode.parentNode.removeChild(textNode);
                         }
-                        var tmp = document.createElement("div");
-                        tmp.appendChild(text);
-                        scope.html = tmp.innerHTML;
+                    }
+                    function removeError(node, word){
+
+                    }
+
+                    function traverseChildNodes(node) {
+                        var next;
+                        console.log(node);
+                        if (node.nodeType === 1) {
+                            if (node = node.firstChild) {
+                                do {
+                                    next = node.nextSibling;
+                                    traverseChildNodes(node);
+                                } while (node = next);
+                            }
+                        } else if (node.nodeType === 3) {
+                            var words = node.nodeValue.split(' ');
+                            console.log(words);
+                            words.forEach(function (word) {
+                                var isCorrect = checkSpelling(word);
+                                if (!isCorrect) {
+                                    wrapSpellingError(node, word);
+                                } else {
+                                    removeError(node, word);
+                                }
+                            });
+                        }
+                    }
+                    if (event.keyCode === 32) {
+                        var _savedSelection = rangy.saveSelection();
+                        console.log("event", event, "scope", scope);
+                        console.log("before: ", _savedSelection);
+                        traverseChildNodes(this);
+                        rangy.restoreSelection(_savedSelection);
                     }
                     /* istanbul ignore else: this is for catching the jqLite testing*/
                     if(eventData) angular.extend(event, eventData);

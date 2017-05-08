@@ -2866,6 +2866,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
 
 // this global var is used to prevent multiple fires of the drop event. Needs to be global to the textAngular file.
 var dropFired = false;
+var dictionary = new Typo('en_US');
 var textAngular = angular.module("textAngular", ['ngSanitize', 'textAngularSetup', 'textAngular.factories', 'textAngular.DOM', 'textAngular.validators', 'textAngular.taBind', 'ui.bootstrap']); //This makes ngSanitize required
 
 textAngular.config([function(){
@@ -3493,7 +3494,7 @@ textAngular.directive("textAngular", [
                         return !(!value || value.trim() === '');
                     };
                 }else{
-                    // if no ngModel then update from the contents of the origional html.
+                    // if no ngModel then update from the contents of the original html.
                     scope.displayElements.forminput.val(_originalContents);
                     scope.html = _originalContents;
                 }
@@ -3662,7 +3663,7 @@ textAngular.directive("textAngular", [
                 scope.displayElements.html.on('keyup', _keyup);
                 scope.displayElements.text.on('keyup', _keyup);
                 // stop updating on key up and update the display/model
-                _keypress = function(event, eventData){
+                _keypress = function (event, eventData) {
                     // bug fix for Firefox.  If we are selecting a <a> already, any characters will
                     // be added within the <a> which is bad!
                     /* istanbul ignore next: don't see how to test this... */
@@ -3686,6 +3687,55 @@ textAngular.directive("textAngular", [
                                 taSelection.setSelectionBeforeElement(taSelection.getSelectionElement());
                             }
                         }
+                    }
+                    function checkSpelling(word) {
+                        return dictionary.check(word.trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""));
+                    }
+
+                    function wrapSpellingError(textNode, wrongWord) {
+                        if (textNode.parentNode.nodeName !== "MARKER") {
+                            console.log("wrapSpellingError - textNode: ", textNode);
+                            var temp = document.createElement("div");
+                            temp.innerHTML = textNode.data.replace(wrongWord, "<marker class='spelling-error'>" + wrongWord + "</marker>");
+                            while (temp.firstChild) {
+                                textNode.parentNode.insertBefore(temp.firstChild, textNode);
+                            }
+                            textNode.parentNode.removeChild(textNode);
+                        }
+                    }
+                    function removeError(node, word){
+
+                    }
+
+                    function traverseChildNodes(node) {
+                        var next;
+                        console.log(node);
+                        if (node.nodeType === 1) {
+                            if (node = node.firstChild) {
+                                do {
+                                    next = node.nextSibling;
+                                    traverseChildNodes(node);
+                                } while (node = next);
+                            }
+                        } else if (node.nodeType === 3) {
+                            var words = node.nodeValue.split(' ');
+                            console.log(words);
+                            words.forEach(function (word) {
+                                var isCorrect = checkSpelling(word);
+                                if (!isCorrect) {
+                                    wrapSpellingError(node, word);
+                                } else {
+                                    removeError(node, word);
+                                }
+                            });
+                        }
+                    }
+                    if (event.keyCode === 32) {
+                        var _savedSelection = rangy.saveSelection();
+                        console.log("event", event, "scope", scope);
+                        console.log("before: ", _savedSelection);
+                        traverseChildNodes(this);
+                        rangy.restoreSelection(_savedSelection);
                     }
                     /* istanbul ignore else: this is for catching the jqLite testing*/
                     if(eventData) angular.extend(event, eventData);
