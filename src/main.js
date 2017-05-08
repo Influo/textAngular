@@ -823,12 +823,12 @@ textAngular.directive("textAngular", [
                         }
                     }
                     function checkSpelling(word) {
-                        return dictionary.check(word.trim().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ""));
+                        return dictionary.check(word.trim().replace(/[.,\/#!?$%\^&\*;:{}=\-_`~()]/g, ""));
                     }
 
                     function wrapSpellingError(textNode, wrongWord) {
-                        if (textNode.parentNode.nodeName !== "MARKER") {
-                            console.log("wrapSpellingError - textNode: ", textNode);
+                        if (textNode.parentNode && textNode.parentNode.nodeName !== "MARKER") {
+                            // console.log("wrapSpellingError - textNode: ", textNode);
                             var temp = document.createElement("div");
                             temp.innerHTML = textNode.data.replace(wrongWord, "<marker class='spelling-error'>" + wrongWord + "</marker>");
                             while (temp.firstChild) {
@@ -838,12 +838,18 @@ textAngular.directive("textAngular", [
                         }
                     }
                     function removeError(node, word){
+                        if (node.parentNode && node.parentNode.nodeName === "MARKER") {
+                            console.log("node", node, "word", word);
+                            node.parentNode.outerHTML = node.nodeValue;
+                        }
 
                     }
 
                     function traverseChildNodes(node) {
                         var next;
                         console.log(node);
+                        if(node.firstChild === "&#65279;")
+                            return;
                         if (node.nodeType === 1) {
                             if (node = node.firstChild) {
                                 do {
@@ -866,10 +872,11 @@ textAngular.directive("textAngular", [
                     }
                     if (event.keyCode === 32) {
                         var _savedSelection = rangy.saveSelection();
-                        console.log("event", event, "scope", scope);
-                        console.log("before: ", _savedSelection);
+                        // console.log("event", event, "scope", scope);
+                        console.log("_savedSelection: ", _savedSelection);
                         traverseChildNodes(this);
                         rangy.restoreSelection(_savedSelection);
+                        // rangy.removeMarkers(_savedSelection);
                     }
                     /* istanbul ignore else: this is for catching the jqLite testing*/
                     if(eventData) angular.extend(event, eventData);
