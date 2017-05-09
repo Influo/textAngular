@@ -3714,6 +3714,7 @@ textAngular.directive("textAngular", [
                                     else
                                         tmp.innerHTML += childNode.nodeValue;
                                 });
+                                traverseChildNodes(tmp);
                                 node.parentNode.outerHTML = tmp.innerHTML;
                             } else
                                 node.parentNode.outerHTML = node.nodeValue;
