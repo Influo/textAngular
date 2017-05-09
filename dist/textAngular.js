@@ -3710,7 +3710,7 @@ textAngular.directive("textAngular", [
                             if (node.parentNode.childNodes.length > 1) {
                                 var tmp = document.createElement("div");
                                 node.parentNode.childNodes.forEach(function (childNode) {
-                                    if (childNode.nodeName === "SPAN" || childNode.nodeName === "B" || childNode.nodeName === "U" || childNode.nodeName === "I")
+                                    if (childNode.nodeName === "SPAN" || childNode.nodeName === "B" || childNode.nodeName === "U" || childNode.nodeName === "I" || childNode.nodeName === "A" || childNode.nodeName === "IMG")
                                         tmp.innerHTML += childNode.outerHTML;
                                     else
                                         tmp.innerHTML += childNode.nodeValue;
