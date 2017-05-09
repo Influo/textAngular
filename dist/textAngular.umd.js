@@ -4882,19 +4882,21 @@ textAngular.directive("textAngular", [
                     }
 
                     function removeError(node) {
-                        if (node.parentNode && node.parentNode.nodeName === "MARKER") {
+                        var marker = "MARKER";
+                        if (node.parentNode && node.parentNode.nodeName === marker) {
                             if (node.parentNode.childNodes.length > 1) {
                                 var tmp = document.createElement("div");
                                 node.parentNode.childNodes.forEach(function (childNode) {
-                                    if (childNode.nodeName === "SPAN")
+                                    if (childNode.nodeName === "SPAN" || childNode.nodeName === "B" || childNode.nodeName === "U" || childNode.nodeName === "I")
                                         tmp.innerHTML += childNode.outerHTML;
                                     else
                                         tmp.innerHTML += childNode.nodeValue;
                                 });
                                 traverseChildNodes(tmp);
                                 node.parentNode.outerHTML = tmp.innerHTML;
-                            } else
+                            } else {
                                 node.parentNode.outerHTML = node.nodeValue;
+                            }
                         }
 
                     }
@@ -4906,6 +4908,11 @@ textAngular.directive("textAngular", [
                         if (node.nodeType === 1) {
                             if (node = node.firstChild) {
                                 do {
+                                    if (node.firstChild && node.firstChild.firstChild && node.firstChild.firstChild.nextSibling) {
+                                        var nextSiblingName = node.firstChild.firstChild.nextSibling.nodeName || "";
+                                        if (node.nodeName === "LI" && node.firstChild.nodeName === "MARKER" && (nextSiblingName === "U" || nextSiblingName === "B" || nextSiblingName === "I"))
+                                            removeError(node.firstChild.firstChild.nextSibling);
+                                    }
                                     next = node.nextSibling;
                                     traverseChildNodes(node);
                                 } while (node = next);
