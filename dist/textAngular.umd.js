@@ -441,9 +441,9 @@ angular.module('textAngularSetup', ['ui.bootstrap'])
                     if (link !== null && link !== undefined) {
                         var startingUrl = "http://";
                         var httpsStartingUrl = "https://";
-                        return link.indexOf(startingUrl) == 0 ||link.indexOf(httpsStartingUrl)==0 ? link : startingUrl + input;
+                        return link.indexOf(startingUrl) === 0 ||link.indexOf(httpsStartingUrl)===0 ? link : startingUrl + input;
                     } else {
-                        allOk = false
+                        allOk = false;
                     }
                     return allOk;
                 };
