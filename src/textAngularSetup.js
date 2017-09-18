@@ -421,14 +421,14 @@ angular.module('textAngularSetup', ['ui.bootstrap'])
 
                 var checkLink = function(link) {
                     var allOk = true;
-                    var urlRegEx = /(https?:\/\/)([?a-zA-Z0-9@:%._+~#=]+\.[a-z]{2,})([-a-zA-Z0-9@:%_+.~#?&//=]*)/i;
-
-                    if (blockJavascript(link)) allOk = false;
-
-                    if (link.indexOf('http://') !== 0 && link.indexOf('https://') !== 0) allOk = false;
-
-                    if (link.match(urlRegEx) === null) allOk = false;
-
+                    
+                    if (link !== null && link !== undefined) {
+                        var startingUrl = "http://";
+                        var httpsStartingUrl = "https://";
+                        return link.indexOf(startingUrl) === 0 ||link.indexOf(httpsStartingUrl)===0 ? link : startingUrl + input;
+                    } else {
+                        allOk = false;
+                    }
                     return allOk;
                 };
 
